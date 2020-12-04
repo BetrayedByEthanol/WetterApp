@@ -11,6 +11,9 @@ public class Main extends Application
 {
     public static void main(String[] args)
     {
+        //Erstelle die Wetterstation
+        WetterStation.getInstance();
+
         launch(args);
     }
 
