@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.9'
+    id 'edu.sc.seis.launch4j' version '2.4.9'
 }
 
 //buildscript {
@@ -16,9 +17,19 @@ plugins {
 //}
 //apply plugin: 'org.openjfx.javafxplugin'
 
+
+
 javafx {
     version = "15.0.1"
     modules = [ 'javafx.controls' , 'javafx.fxml']
+}
+
+application {
+    mainClass = 'org.WetterApp.Main'
+}
+
+launch4j {
+    mainClassName = 'org.WetterApp.Main'
 }
 
 group 'org.WetterApp'

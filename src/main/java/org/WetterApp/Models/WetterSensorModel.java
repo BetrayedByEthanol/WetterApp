@@ -38,7 +38,9 @@ public class WetterSensorModel implements IObservable
 
     public WetterDatenModel messeDaten()
     {
-        return new WetterDatenModel();
+        WetterDatenModel daten = new WetterDatenModel();
+        daten.setGemessenVon(this);
+        return daten;
     }
 
     public int getId() {

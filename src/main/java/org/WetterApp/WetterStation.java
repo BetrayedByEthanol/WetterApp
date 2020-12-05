@@ -1,6 +1,7 @@
 package org.WetterApp;
 
 import javafx.util.Pair;
+import org.WetterApp.Controllers.BaseController;
 import org.WetterApp.Data.DbContext;
 import org.WetterApp.Interfaces.IObservable;
 import org.WetterApp.Interfaces.IObserver;
@@ -10,17 +11,13 @@ import org.WetterApp.Models.WetterDatenModel;
 import java.lang.module.ModuleDescriptor;
 import java.util.ArrayList;
 
-public class WetterStation implements IObserver, IObservable {
+public class WetterStation implements IObserver<Pair<Integer,WetterDatenModel>>, IObservable {
 
     private DbContext context;
     private static WetterStation Instance;
-    private ArrayList<IObserver> observers = new ArrayList<>();
+    private IObserver observer;
 
-    public ArrayList<WetterDatenModel> getWetterDaten() {
-        return wetterDaten;
-    }
-
-    private ArrayList<WetterDatenModel> wetterDaten = new ArrayList<>();
+    private WetterDatenModel wetterDaten;
 
     private WetterStation()
     {
@@ -35,10 +32,10 @@ public class WetterStation implements IObserver, IObservable {
     }
 
     @Override
-    public void update(Object daten)
+    public synchronized void update(Pair<Integer,WetterDatenModel> daten)
     {
-        WetterDatenModel wetterdaten = ((Pair<Integer,WetterDatenModel>) daten).getValue();
-        wetterDaten.add(wetterdaten);
+        WetterDatenModel wetterdaten = daten.getValue();
+        wetterDaten = wetterdaten;
         notifyObservers();
     }
 
@@ -63,17 +60,15 @@ public class WetterStation implements IObserver, IObservable {
 
     @Override
     public void notifyObservers() {
-        for(IObserver obs : observers){
-            obs.update(wetterDaten);
-        }
+
+       if(observer != null)observer.update(wetterDaten);
+
     }
 
     @Override
     public void registerObserver(IObserver Observer) {
-        observers.add(Observer);
+        observer = Observer;
     }
 
-    public void removeObserver(IObserver obs){
-        observers.remove(obs);
-    }
+
 }

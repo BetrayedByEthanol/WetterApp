@@ -13,6 +13,16 @@ public class WetterDatenModel
     private OffsetDateTime zeitDesMessens;
     private OffsetDateTime zeitDerLetztenAederung;
 
+    public WetterSensorModel getGemessenVon() {
+        return gemessenVon;
+    }
+
+    public void setGemessenVon(WetterSensorModel gemessenVon) {
+        this.gemessenVon = gemessenVon;
+    }
+
+    private WetterSensorModel gemessenVon;
+
     public int getId() {
         return id;
     }
