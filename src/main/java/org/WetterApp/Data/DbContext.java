@@ -4,35 +4,24 @@ import org.WetterApp.Models.MockWetterSensor;
 
 
 
-public class DbContext
+public class DbContext implements IDbContext
 {
     private String connection;
-    private MockWetterDatenContext fakeWetterdaten;
-    private MockWetterSensor fakeAdruinos;
-    private WetterDatenContext Wetterdaten;
-    private WetterSensorContext WetterSensor;
 
     public DbContext()
     {
-        this.fakeWetterdaten = new MockWetterDatenContext();
-        this.fakeAdruinos = new MockWetterSensor();
-        Wetterdaten = new WetterDatenContext();
-        WetterSensor = new WetterSensorContext();
     }
 
-    public MockWetterDatenContext getFakeWetterdaten() {
-        return fakeWetterdaten;
+    public WetterDatenContext getWetterdatenContext() {
+        return new WetterDatenContext();
     }
 
-    public MockWetterSensor getFakeAdruinos() {
-        return fakeAdruinos;
+    public WetterSensorContext getWetterSensorContext() {
+        return new WetterSensorContext();
     }
 
-    public WetterDatenContext getWetterdaten() {
-        return Wetterdaten;
-    }
 
-    public WetterSensorContext getWetterSensor() {
-        return WetterSensor;
+    public MainControllerSettingContext getMainControllerSettinContext() {
+        return new MainControllerSettingContext();
     }
 }

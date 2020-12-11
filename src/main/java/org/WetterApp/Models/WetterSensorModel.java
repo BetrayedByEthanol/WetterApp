@@ -26,6 +26,7 @@ public class WetterSensorModel implements IObservable
             @Override
             public void run() {
                 daten = messeDaten();
+				daten.setGemessenVon(id);
                 OffsetDateTime now = OffsetDateTime.now();
                 daten.setZeitDerLetztenAederung(now);
                 daten.setZeitDesMessens(now);
@@ -38,9 +39,7 @@ public class WetterSensorModel implements IObservable
 
     public WetterDatenModel messeDaten()
     {
-        WetterDatenModel daten = new WetterDatenModel();
-        daten.setGemessenVon(this);
-        return daten;
+        return new WetterDatenModel();;
     }
 
     public int getId() {

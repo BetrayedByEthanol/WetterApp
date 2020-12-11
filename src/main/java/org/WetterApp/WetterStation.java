@@ -21,7 +21,7 @@ public class WetterStation implements IObserver<Pair<Integer,WetterDatenModel>>,
 
     private WetterStation()
     {
-        context = new DbContext();
+        this.context = IDbContext.DB_CONTEXT;
         init();
     }
 
@@ -32,11 +32,13 @@ public class WetterStation implements IObserver<Pair<Integer,WetterDatenModel>>,
     }
 
     @Override
-    public synchronized void update(Pair<Integer,WetterDatenModel> daten)
+    public synchronized void update(WetterDatenModel daten)
     {
-        WetterDatenModel wetterdaten = daten.getValue();
-        wetterDaten = wetterdaten;
-        notifyObservers();
+		wetterDaten = daten;
+		
+		//Store in DB
+        
+		notifyObservers();
     }
 
     public void init()

@@ -12,16 +12,16 @@ public class WetterDatenModel
     private double luftFeuchtigkeit;
     private OffsetDateTime zeitDesMessens;
     private OffsetDateTime zeitDerLetztenAederung;
+    private int gemessenVon;
 
-    public WetterSensorModel getGemessenVon() {
+    public int getGemessenVon() {
         return gemessenVon;
     }
 
-    public void setGemessenVon(WetterSensorModel gemessenVon) {
+    public void setGemessenVon(int gemessenVon) {
         this.gemessenVon = gemessenVon;
     }
 
-    private WetterSensorModel gemessenVon;
 
     public int getId() {
         return id;

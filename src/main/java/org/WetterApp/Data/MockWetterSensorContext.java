@@ -1,4 +1,4 @@
 package org.WetterApp.Data;
 
-public class MockWetterSensorContext {
+public class MockWetterSensorContext extends WetterSensorContext{
 }

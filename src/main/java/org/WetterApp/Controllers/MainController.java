@@ -22,8 +22,10 @@ import java.util.ResourceBundle;
 public class MainController extends BaseController implements IObserver<WetterDatenModel>
 {
 
-
-    @FXML
+	private IDbContext context;
+    private int selectedSensor = 1;
+	
+	@FXML
     private TextField WetterSensorChoice = new TextField();
     @FXML
     private LineChart tempChart = new LineChart(new NumberAxis(1,12,1), new NumberAxis(0,50,5));
@@ -41,6 +43,7 @@ public class MainController extends BaseController implements IObserver<WetterDa
 
     public MainController()
     {
+		this.context = IDbContext.DB_CONTEXT;
         WetterStation.getInstance().registerObserver(this);
     }
 
@@ -65,8 +68,8 @@ public class MainController extends BaseController implements IObserver<WetterDa
     @Override
     public synchronized void update(WetterDatenModel daten)
     {
-        //if(daten.getGemessenVon().getId() == ((Pair<Integer,String>)wetterSensor.getValue()).getKey())
-        {
+        if(selectedSensor == (daten).getGemessenVon())
+		{
             WetterSensorChoice.setText(Double.toString(daten.getTempInC()));
         }
 
