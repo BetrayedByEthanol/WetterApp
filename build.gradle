@@ -25,7 +25,7 @@ javafx {
 }
 
 application {
-    mainClass = 'org.WetterApp.Main'
+    mainClassName = 'org.WetterApp.Main'
 }
 
 launch4j {

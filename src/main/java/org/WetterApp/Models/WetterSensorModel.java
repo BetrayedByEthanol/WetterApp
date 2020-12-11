@@ -17,29 +17,38 @@ public class WetterSensorModel implements IObservable
     private String name;
     private WetterDatenModel daten;
     private ArrayList<IObserver> observers = new ArrayList<>();
-
+    private Timer timer;
 
     public WetterSensorModel()
     {
-        Timer timer = new Timer();
+    }
+
+    public void start(){
+        timer = new Timer();
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
                 daten = messeDaten();
-				daten.setGemessenVon(id);
+                daten.setGemessenVon(id);
                 OffsetDateTime now = OffsetDateTime.now();
                 daten.setZeitDerLetztenAederung(now);
                 daten.setZeitDesMessens(now);
                 notifyObservers();
             }
         };
-        timer.scheduleAtFixedRate(task,500, 9000);
 
+        OffsetDateTime rightNow = OffsetDateTime.now();
+        long delay = rightNow.toEpochSecond() % 9000;
+        timer.scheduleAtFixedRate(task,delay, 9000);
+    }
+
+    public void stop(){
+        timer.cancel();
     }
 
     public WetterDatenModel messeDaten()
     {
-        return new WetterDatenModel();;
+        return new WetterDatenModel();
     }
 
     public int getId() {
@@ -78,8 +87,7 @@ public class WetterSensorModel implements IObservable
     public void notifyObservers() {
         for(IObserver obs : observers)
         {
-            Pair<Integer,WetterDatenModel> update = new Pair<Integer, WetterDatenModel>(id,daten);
-            obs.update(update);
+            obs.update(daten);
         }
     }
 

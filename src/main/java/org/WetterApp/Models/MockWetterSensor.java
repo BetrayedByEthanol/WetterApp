@@ -9,8 +9,6 @@ public class MockWetterSensor extends WetterSensorModel
     @Override
     public WetterDatenModel messeDaten()
     {
-        MockWetterDatenModel daten = new MockWetterDatenModel();
-        daten.setGemessenVon(this);
-        return daten;
+        return  new MockWetterDatenModel();
     }
 }
