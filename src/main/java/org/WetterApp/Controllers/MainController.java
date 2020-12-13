@@ -8,15 +8,11 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
-import javafx.util.Callback;
-import javafx.util.Pair;
 import org.WetterApp.Data.IDbContext;
 import org.WetterApp.Interfaces.IObserver;
 import org.WetterApp.Models.WetterDatenModel;
 import org.WetterApp.Models.WetterSensorModel;
 import org.WetterApp.WetterStation;
-
-import java.awt.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -77,7 +73,7 @@ public class MainController extends BaseController implements IObserver<WetterDa
 
     @Override
     public synchronized void update(WetterDatenModel daten) {
-        if (selectedSensor == (daten).getGemessenVon()) {
+        if (selectedSensor == daten.getGemessenVon()) {
             WetterSensorChoice.setText(Double.toString(daten.getTempInC()));
         }
 

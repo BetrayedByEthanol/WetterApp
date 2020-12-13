@@ -19,6 +19,8 @@ public class WetterSensorModel implements IObservable
     private ArrayList<IObserver> observers = new ArrayList<>();
     private Timer timer;
 
+    public static ArrayList<WetterSensorModel> activeSensors = new ArrayList<>();
+
     public WetterSensorModel()
     {
     }
@@ -38,8 +40,10 @@ public class WetterSensorModel implements IObservable
         };
 
         OffsetDateTime rightNow = OffsetDateTime.now();
-        long delay = rightNow.toEpochSecond() % 9000;
-        timer.scheduleAtFixedRate(task,delay, 9000);
+        long delay = (900 - (rightNow.toEpochSecond() % 900)) * 1000;
+        timer.scheduleAtFixedRate(task,delay, 900000);
+        activeSensors.add(this);
+
     }
 
     public void stop(){

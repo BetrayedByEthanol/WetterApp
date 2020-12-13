@@ -18,7 +18,6 @@ plugins {
 //apply plugin: 'org.openjfx.javafxplugin'
 
 
-
 javafx {
     version = "15.0.1"
     modules = [ 'javafx.controls' , 'javafx.fxml']
@@ -26,10 +25,14 @@ javafx {
 
 application {
     mainClassName = 'org.WetterApp.Main'
+    executableDir = 'bin'
 }
 
 launch4j {
+    headerType = "gui"
     mainClassName = 'org.WetterApp.Main'
+    outfile = "WetterApp.exe"
+    jar = '../libs/Master_Mode_System_Config-all-1.0-SNAPSHOT.jar'
 }
 
 group 'org.WetterApp'
@@ -41,5 +44,20 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12';
-    compile group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.7.1'
+    compile group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.7.1';
+    compile group: 'org.openjfx', name: 'javafx-controls', version: '15.0.1';
+    compile group: 'org.openjfx', name: 'javafx-fxml', version: '15.0.1';
+}
+
+mainClassName = "org.WetterApp.Main"
+
+jar {
+    archiveBaseName = "jarjarBinks.jar"
+    baseName = 'WWjar.jar'
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Jar File Example',
+                'Main-Class': "org.WetterApp.Main"
+    }
+
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
 }

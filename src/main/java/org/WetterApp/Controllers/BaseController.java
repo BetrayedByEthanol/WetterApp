@@ -1,5 +1,6 @@
 package org.WetterApp.Controllers;
 
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
 import java.net.URL;
@@ -15,4 +16,5 @@ public class BaseController implements Initializable {
         this.location = location;
         this.resources = resources;
     }
+
 }
