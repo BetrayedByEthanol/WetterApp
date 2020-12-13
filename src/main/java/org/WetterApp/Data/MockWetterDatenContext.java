@@ -15,7 +15,7 @@ public class MockWetterDatenContext extends WetterDatenContext{
 
     @Override
     public ArrayList<WetterDatenModel> getWetterdaten(int sensorId, long startZeitpunkt, long endZeitpunkt) {
-        ArrayList<WetterDatenModel> models = new ArrayList<>();
+        ArrayList<WetterDatenModel> models = new ArrayList<WetterDatenModel>();
         for(int i = 0; i < 35040; i++)
         {
             MockWetterDatenModel model = new MockWetterDatenModel();

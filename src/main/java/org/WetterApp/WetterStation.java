@@ -64,7 +64,7 @@ public class WetterStation implements IObserver<WetterDatenModel>, IObservable {
     @Override
     public void notifyObservers() {
 
-       if(observer != null)observer.update(wetterDaten);
+       if(observer != null  )observer.update(wetterDaten);
 
     }
 

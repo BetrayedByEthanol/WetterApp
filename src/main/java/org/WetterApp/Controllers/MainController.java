@@ -8,6 +8,8 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
 import javafx.util.Callback;
 import javafx.util.Pair;
 import org.WetterApp.Data.IDbContext;
@@ -18,6 +20,7 @@ import org.WetterApp.WetterStation;
 
 import java.awt.*;
 import java.net.URL;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -41,6 +44,7 @@ public class MainController extends BaseController implements IObserver<WetterDa
     @FXML
     private ComboBox<String> wetterSensor = new ComboBox<String>();
     private XYChart.Series chartDaten = new XYChart.Series();
+
 
     public MainController() {
         this.context = IDbContext.DB_CONTEXT;
@@ -143,8 +147,13 @@ public class MainController extends BaseController implements IObserver<WetterDa
         context.getWetterSensorContext().deleteWettersensor(0);
     }
 
-    public void updateView(ArrayList<WetterDatenModel> wetterdaten) {
+    public void updateView(ArrayList<WetterDatenModel> wetterdaten)
+    {
+        for(WetterDatenModel daten : wetterdaten)
+        {
+            tempChart.getData().add(new XYChart.Data(daten.getZeitDesMessens().toEpochSecond() - OffsetDateTime.now().toEpochSecond() - 31536000,daten.getTempInC()));
 
+        }
     }
 
 }
