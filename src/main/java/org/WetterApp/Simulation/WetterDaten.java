@@ -1,37 +1,25 @@
-package org.WetterApp.Models;
+package org.WetterApp.Simulation;
 
-import org.WetterApp.Models.Validation.WetterDatenValidation;
+import com.google.gson.annotations.Expose;
 
 import java.time.OffsetDateTime;
 
-public class WetterDatenModel implements WetterDatenValidation
-{
-    private int id;
+public class WetterDaten {
+
+    @Expose
     private double windGeschw;
+    @Expose
     private double tempInC;
+    @Expose
     private double co2;
+    @Expose
     private double luftDruck;
+    @Expose
     private double luftFeuchtigkeit;
-    private OffsetDateTime zeitDesMessens;
-    private OffsetDateTime zeitDerLetztenAederung;
+    @Expose
+    private String zeitDesMessens;
+    @Expose
     private int gemessenVon;
-
-    public int getGemessenVon() {
-        return gemessenVon;
-    }
-
-    public void setGemessenVon(int gemessenVon) {
-        this.gemessenVon = gemessenVon;
-    }
-
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public double getWindGeschw() {
         return windGeschw;
@@ -73,19 +61,19 @@ public class WetterDatenModel implements WetterDatenValidation
         this.luftFeuchtigkeit = luftFeuchtigkeit;
     }
 
-    public OffsetDateTime getZeitDesMessens() {
+    public  String getZeitDesMessens() {
         return zeitDesMessens;
     }
 
-    public void setZeitDesMessens(OffsetDateTime zeitDesMessens) {
+    public void setZeitDesMessens(String zeitDesMessens) {
         this.zeitDesMessens = zeitDesMessens;
     }
 
-    public OffsetDateTime getZeitDerLetztenAederung() {
-        return zeitDerLetztenAederung;
+    public int getGemessenVon() {
+        return gemessenVon;
     }
 
-    public void setZeitDerLetztenAederung(OffsetDateTime zeitDerLetztenAederung) {
-        this.zeitDerLetztenAederung = zeitDerLetztenAederung;
+    public void setGemessenVon(int gemessenVon) {
+        this.gemessenVon = gemessenVon;
     }
 }

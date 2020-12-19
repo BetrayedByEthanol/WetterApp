@@ -1,8 +1,5 @@
 package org.WetterApp.Data;
 
-import org.WetterApp.Models.MockWetterSensor;
-
-
 
 public class DbContext implements IDbContext
 {

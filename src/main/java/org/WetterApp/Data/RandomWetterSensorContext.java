@@ -4,7 +4,7 @@ import org.WetterApp.Models.WetterSensorModel;
 
 import java.util.ArrayList;
 
-public class MockWetterSensorContext extends WetterSensorContext{
+public class RandomWetterSensorContext extends WetterSensorContext{
     @Override
     public ArrayList<WetterSensorModel> ladeWetterSensoren() {
         ArrayList<WetterSensorModel> result = new ArrayList();

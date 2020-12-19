@@ -4,7 +4,7 @@ package org.WetterApp;
 import org.WetterApp.Data.IDbContext;
 import org.WetterApp.Interfaces.IObservable;
 import org.WetterApp.Interfaces.IObserver;
-import org.WetterApp.Models.MockWetterSensor;
+import org.WetterApp.Models.RandomWetterSensor;
 import org.WetterApp.Models.WetterDatenModel;
 
 
@@ -43,19 +43,19 @@ public class WetterStation implements IObserver<WetterDatenModel>, IObservable {
         //Ueberpruefe, ob die Datenbank exsistiert.
 
         //Lade bzw. registiere Sensoren
-        MockWetterSensor sensor1 = new MockWetterSensor();
+        RandomWetterSensor sensor1 = new RandomWetterSensor();
         sensor1.registerObserver(this);
         sensor1.setId(1);
         sensor1.start();
-        MockWetterSensor sensor2 = new MockWetterSensor();
+        RandomWetterSensor sensor2 = new RandomWetterSensor();
         sensor2.registerObserver(this);
         sensor2.setId(2);
         sensor2.start();
-        MockWetterSensor sensor3 = new MockWetterSensor();
+        RandomWetterSensor sensor3 = new RandomWetterSensor();
         sensor3.registerObserver(this);
         sensor3.setId(3);
         sensor3.start();
-        MockWetterSensor sensor4 = new MockWetterSensor();
+        RandomWetterSensor sensor4 = new RandomWetterSensor();
         sensor4.setId(4);
         sensor4.start();
         sensor4.registerObserver(this);

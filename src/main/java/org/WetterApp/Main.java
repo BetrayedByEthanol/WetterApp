@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.WetterApp.Models.WetterSensorModel;
+import org.WetterApp.Simulation.WetterSensor;
 
 import java.io.IOException;
 
@@ -13,6 +14,7 @@ public class Main extends Application {
     public static void main(String[] args) {
         //Erstelle die Wetterstation
         WetterStation.getInstance();
+        System.out.println(new WetterSensor().send());
 
         launch(args);
     }

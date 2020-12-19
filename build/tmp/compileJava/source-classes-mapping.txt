@@ -1,4 +1,42 @@
-Main.java
- Main
-MainController.java
- MainController
+org/WetterApp/Data/WetterSensorContext.java
+ org.WetterApp.Data.WetterSensorContext
+org/WetterApp/Models/MockWetterSensor.java
+ org.WetterApp.Models.MockWetterSensor
+org/WetterApp/Data/MockDbContext.java
+ org.WetterApp.Data.MockDbContext
+org/WetterApp/WetterStation.java
+ org.WetterApp.WetterStation
+org/WetterApp/Data/MockWetterDatenContext.java
+ org.WetterApp.Data.MockWetterDatenContext
+org/WetterApp/Data/DbContext.java
+ org.WetterApp.Data.DbContext
+org/WetterApp/Interfaces/IObservable.java
+ org.WetterApp.Interfaces.IObservable
+org/WetterApp/Data/MainControllerSettingContext.java
+ org.WetterApp.Data.MainControllerSettingContext
+org/WetterApp/Simulation/WetterSensor.java
+ org.WetterApp.Simulation.WetterSensor
+org/WetterApp/Models/WetterDatenModel.java
+ org.WetterApp.Models.WetterDatenModel
+org/WetterApp/Data/WetterDatenContext.java
+ org.WetterApp.Data.WetterDatenContext
+org/WetterApp/Main.java
+ org.WetterApp.Main
+org/WetterApp/Controllers/BaseController.java
+ org.WetterApp.Controllers.BaseController
+org/WetterApp/Models/WetterSensorModel.java
+ org.WetterApp.Models.WetterSensorModel
+ org.WetterApp.Models.WetterSensorModel$1
+org/WetterApp/Simulation/WetterDaten.java
+ org.WetterApp.Simulation.WetterDaten
+org/WetterApp/Models/MockWetterDatenModel.java
+ org.WetterApp.Models.MockWetterDatenModel
+org/WetterApp/Interfaces/IObserver.java
+ org.WetterApp.Interfaces.IObserver
+org/WetterApp/Controllers/MainController.java
+ org.WetterApp.Controllers.MainController
+ org.WetterApp.Controllers.MainController$1
+org/WetterApp/Data/IDbContext.java
+ org.WetterApp.Data.IDbContext
+org/WetterApp/Data/MockWetterSensorContext.java
+ org.WetterApp.Data.MockWetterSensorContext

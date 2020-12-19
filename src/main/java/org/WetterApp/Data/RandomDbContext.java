@@ -1,14 +1,14 @@
 package org.WetterApp.Data;
 
-public class MockDbContext extends DbContext {
+public class RandomDbContext extends DbContext {
 
     @Override
     public WetterDatenContext getWetterdatenContext() {
-        return new MockWetterDatenContext();
+        return new RandomWetterDatenContext();
     }
 
     @Override
     public WetterSensorContext getWetterSensorContext() {
-        return new MockWetterSensorContext();
+        return new RandomWetterSensorContext();
     }
 }
