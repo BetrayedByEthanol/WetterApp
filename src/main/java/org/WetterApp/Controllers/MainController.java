@@ -33,41 +33,49 @@ public class MainController extends BaseController implements IObserver<WetterDa
     @FXML
     private TextField WetterSensorChoice = new TextField();
     @FXML
-    private LineChart tempChart;// = new LineChart(new NumberAxis(0, 31536000, 2628000), new NumberAxis(0, 50, 5));
+    private LineChart tempChart;
     @FXML
-    private LineChart co2Chart = new LineChart(new NumberAxis(1, 12, 1), new NumberAxis(0, 50, 5));
+    private LineChart co2Chart;
     @FXML
-    private LineChart windChart = new LineChart(new NumberAxis(1, 12, 1), new NumberAxis(0, 50, 5));
+    private LineChart windChart;
     @FXML
-    private LineChart feuchtChart = new LineChart(new NumberAxis(1, 12, 1), new NumberAxis(0, 50, 5));
+    private LineChart feuchtChart;
     @FXML
-    private LineChart druckChart = new LineChart(new NumberAxis(1, 12, 1), new NumberAxis(0, 50, 5));
+    private LineChart druckChart;
     @FXML
     private ComboBox<String> wetterSensor = new ComboBox<String>();
     @FXML
     private TextField testMessage = new TextField();
+    
+    private ArrayList<LineChart> charts = new AurrayList<LineChart>();
 
     public MainController() {
         this.context = IDbContext.DB_CONTEXT;
 
         //Lade Settings
         selectedSensor = context.getMainControllerSettinContext().getSelectedSensorId();
-
-
+        
+        
         WetterStation.getInstance().registerObserver(this);
     }
 
     @Override
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
+        charts.add(tempChart);
+        charts.add(windChart);
+        charts.add(druckChart);
+        charts.add(feuchtChart);
+        charts.add(co2Chart);
+    
+        Platform.runLater(()->{
+               ladeWetterdatenDesLetztenJahres();
+               getSensoren();
+               getAlteWetterdatenModel();
+            });
 
-        //NumberAxis xAxis = new NumberAxis();
-        ladeWetterdatenDesLetztenJahres();
-        NumberAxis xAxis = (NumberAxis) tempChart.getXAxis();
-
-        xAxis.setTickLabelRotation(270);
-
-        xAxis.setTickLabelFormatter(new StringConverter<Number>() {
+        //Refactort into new Class
+        StringConverter<Number> monthConverter = new StringConverter<Number>() {
 
             @Override
             public String toString(Number number) {
@@ -80,20 +88,15 @@ public class MainController extends BaseController implements IObserver<WetterDa
             public Number fromString(String string) {
                 return null;
             }
-        });
-        xAxis.setTickLabelsVisible(true);
-
-
-        getSensoren();
-
-        getAlteWetterdatenModel();
-
-        //ladeWetterdatenDesLetztenJahres();
-
-        ObservableList<String> list = FXCollections.observableArrayList();
-        list.add("test");
-        wetterSensor.setItems(list);
-        wetterSensor.getItems().add("Berlin Ost");
+        };
+        
+        for(LineChart chart : charts)
+        { 
+					NumberAxis xAxis = (NumberAxis) chart.getXAxis();
+          xAxis.setTickLabelRotation(270);
+          xAxis.setTickLabelFormatter(monthConverter);
+          xAxis.setTickLabelsVisible(true);
+        }
         super.initialize(location, resources);
     }
 
@@ -101,6 +104,7 @@ public class MainController extends BaseController implements IObserver<WetterDa
     public void doSmth() {
         WetterSensorChoice.setText("NO");
         wetterSensor.getItems().add("NOOOOOO");
+        for(LineChart chart : charts) chart = new LineChart();
     }
 
     @Override
@@ -116,47 +120,34 @@ public class MainController extends BaseController implements IObserver<WetterDa
 
     public void singleUpdate(WetterDatenModel daten)
     {
-        WetterSensorChoice.setText(Double.toString(daten.getTempInC()));
+        if(((XYChart.Series)tempChart.getData().get(0)).getData().size() > 35040) for(LineChart chart : charts) chart.getData().get(0).getData().remove(0);
+              
+        XYChart.Data[] data = createDataSet(daten);
 
-        XYChart.Series tempSeries = (XYChart.Series)(tempChart.getData().get(0));
-        XYChart.Series windSeries = (XYChart.Series)(windChart.getData().get(0));
-        XYChart.Series druckSeries = (XYChart.Series)(druckChart.getData().get(0));
-        XYChart.Series feuchtSeries = (XYChart.Series)(feuchtChart.getData().get(0));
-        XYChart.Series co2Series = (XYChart.Series)(co2Chart.getData().get(0));
+        for(int i = 0; i < 5; i++) charts[i].getData().get(0).getData().add(data[i]);
 
-        if(((XYChart.Series)tempChart.getData().get(0)).getData().size() > 35040)
-        {
-            tempSeries.getData().remove(0);
-            windSeries.getData().remove(0);
-            druckSeries.getData().remove(0);
-            feuchtSeries.getData().remove(0);
-            co2Series.getData().remove(0);
-        }
+        //Check labels
+    }
+
+    private XYChart.Data[] createDataSet(WetterDatenModel daten)
+    {
         long time = daten.getZeitDesMessens().toEpochSecond() - (OffsetDateTime.now().minusYears(1).toEpochSecond() - (OffsetDateTime.now().toEpochSecond() % 900) );
-        double timeValue = Double.parseDouble(Long.toString(time)) / 2628000;
+        double timeValue = ((double) time)) / 2628000;
         Rectangle rect = new Rectangle(0, 0);
         rect.setVisible(false);
 
-        XYChart.Data tempData = new XYChart.Data(timeValue, daten.getTempInC());
-        XYChart.Data windData = new XYChart.Data(timeValue,daten.getWindGeschw());
-        XYChart.Data druckData = new XYChart.Data(timeValue,daten.getLuftDruck());
-        XYChart.Data feuchtData = new XYChart.Data(timeValue,daten.getLuftFeuchtigkeit());
-        XYChart.Data co2Data = new XYChart.Data(timeValue,daten.getCo2());
-
-        tempData.setNode(rect);
-        windData.setNode(rect);
-        druckData.setNode(rect);
-        feuchtData.setNode(rect);
-        co2Data.setNode(rect);
-
-        tempSeries.getData().add(tempData);
-        windSeries.getData().add(windData);
-        druckSeries.getData().add(druckData);
-        feuchtSeries.getData().add(feuchtData);
-        co2Series.getData().add(co2Data);
-
-
-        //Check labels
+        XYChart.Data[] dataSet = new XYChart.Data[] 
+        { 
+          new XYChart.Data(timeValue, daten.getTempInC()), 
+          new XYChart.Data(timeValue,daten.getWindGeschw()), 
+          new XYChart.Data(timeValue,daten.getLuftDruck()), 
+          new XYChart.Data(timeValue,daten.getLuftFeuchtigkeit()), 
+          new XYChart.Data(timeValue,daten.getCo2())
+        };
+        
+        for(XYChart.Data data : dataSet) data.setNode(rect);
+             
+        return dataSet;
     }
 
     @FXML
@@ -226,52 +217,17 @@ public class MainController extends BaseController implements IObserver<WetterDa
         for(int i = 0; i < 5; i++ ) dtoList[i] = new LinkedList<XYChart.Data>();
         for (WetterDatenModel daten : wetterdaten)
         {
-            long time = daten.getZeitDesMessens().toEpochSecond() - (OffsetDateTime.now().minusYears(1).toEpochSecond() - (OffsetDateTime.now().toEpochSecond() % 900) );
-            double timeValue = Double.parseDouble(Long.toString(time)) / 2628000;
-            Rectangle rect = new Rectangle(0, 0);
-            rect.setVisible(false);
-            XYChart.Data tempData = new XYChart.Data(timeValue, daten.getTempInC());
-            XYChart.Data windData = new XYChart.Data(timeValue, daten.getWindGeschw());
-            XYChart.Data druckData = new XYChart.Data(timeValue, daten.getLuftDruck());
-            XYChart.Data feuchtData = new XYChart.Data(timeValue, daten.getLuftFeuchtigkeit());
-            XYChart.Data co2Data = new XYChart.Data(timeValue, daten.getCo2());
-            tempData.setNode(rect);
-            windData.setNode(rect);
-            druckData.setNode(rect);
-            feuchtData.setNode(rect);
-            co2Data.setNode(rect);
-            dtoList[0].add(tempData);
-            dtoList[1].add(windData);
-            dtoList[2].add(druckData);
-            dtoList[3].add(feuchtData);
-            dtoList[4].add(co2Data);
+            XYChart.Data[] dataSet = createDataSet(daten);
+            for(int i = 0; i < 5; i++ ) dtoList[i].add(dataSet[i]);
         }
-        tempChart.getData().removeAll(tempChart.getData());
-        windChart.getData().removeAll(windChart.getData());
-        druckChart.getData().removeAll(druckChart.getData());
-        feuchtChart.getData().removeAll(feuchtChart.getData());
-        co2Chart.getData().removeAll(co2Chart.getData());
-
-        XYChart.Series tempSeries = new XYChart.Series();
-        XYChart.Series windSeries = new XYChart.Series();
-        XYChart.Series druckSeries = new XYChart.Series();
-        XYChart.Series feuchtSeries = new XYChart.Series();
-        XYChart.Series co2Series = new XYChart.Series();
-
-        tempSeries.getData().setAll(dtoList[0]);
-        windSeries.getData().setAll(dtoList[1]);
-        druckSeries.getData().setAll(dtoList[2]);
-        feuchtSeries.getData().setAll(dtoList[3]);
-        co2Series.getData().setAll(dtoList[4]);
-
-        tempChart.getData().setAll(tempSeries);
-        windChart.getData().setAll(windSeries);
-        druckChart.getData().setAll(druckSeries);
-        feuchtChart.getData().setAll(feuchtSeries);
-        co2Chart.getData().setAll(co2Series);
-
-        testMessage.setText(Long.toString(wetterdaten.get(0).getZeitDesMessens().toEpochSecond()));
-        //testMessage.setText(Integer.toString(tempSeries.getData().size()));
+        
+        for(int i = 0; i < 5; i++)
+        {
+            charts[i].getData().removeAll(charts[i].getData());
+            XYChart.Series series = new XYChart.Series();
+            series.getData().setAll(dtoList[i]);
+            charts[i].getData().setAll(series);
+        }
     }
 
 }
