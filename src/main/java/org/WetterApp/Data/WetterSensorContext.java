@@ -9,9 +9,12 @@ public class WetterSensorContext {
         return new ArrayList<WetterSensorModel>();
     }
 
+    public WetterSensorModel ladeWetterSensor(int id){
+        return new WetterSensorModel();
+    }
     //returns PK
-    public int neuerWettersensor(WetterSensorModel sensor){
-        return 5;
+    public WetterSensorModel neuerWettersensor(WetterSensorModel sensor){
+        return sensor;
     }
 
     public boolean deleteWettersensor(int id){

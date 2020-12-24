@@ -1,14 +1,18 @@
 package org.WetterApp;
 
 
+import com.google.gson.Gson;
 import org.WetterApp.Data.IDbContext;
 import org.WetterApp.Interfaces.IObservable;
 import org.WetterApp.Interfaces.IObserver;
-import org.WetterApp.Models.RandomWetterSensor;
+import org.WetterApp.Mapping.WetterDatenMapper;
+import org.WetterApp.Models.DataTransitionalObjects.WetterDatenDTO;
+import org.WetterApp.Models.Validation.WetterDatenValidation;
+import org.WetterApp.Simulation.RandomWetterSensor;
 import org.WetterApp.Models.WetterDatenModel;
 
 
-public class WetterStation implements IObserver<WetterDatenModel>, IObservable {
+public class WetterStation implements IObserver<String>, IObservable {
 
     private IDbContext context;
     private static WetterStation Instance;
@@ -19,7 +23,6 @@ public class WetterStation implements IObserver<WetterDatenModel>, IObservable {
     private WetterStation()
     {
         this.context = IDbContext.DB_CONTEXT;
-        init();
     }
 
     public static WetterStation getInstance()
@@ -29,37 +32,20 @@ public class WetterStation implements IObserver<WetterDatenModel>, IObservable {
     }
 
     @Override
-    public synchronized void update(WetterDatenModel daten)
+    public synchronized void update(String daten)
     {
-		wetterDaten = daten;
-		
-		//Store in DB
-        
+        Gson gson = new Gson();
+        WetterDatenDTO dto =  gson.fromJson(daten, WetterDatenDTO.class);
+
+        WetterDatenModel model = WetterDatenMapper.MAPPER.map(dto);
+
+        wetterDaten = WetterDatenValidation.validate(model);
+
+		wetterDaten = context.getWetterdatenContext().speichereWetterdaten(wetterDaten);
+
 		notifyObservers();
     }
 
-    public void init()
-    {
-        //Ueberpruefe, ob die Datenbank exsistiert.
-
-        //Lade bzw. registiere Sensoren
-        RandomWetterSensor sensor1 = new RandomWetterSensor();
-        sensor1.registerObserver(this);
-        sensor1.setId(1);
-        sensor1.start();
-        RandomWetterSensor sensor2 = new RandomWetterSensor();
-        sensor2.registerObserver(this);
-        sensor2.setId(2);
-        sensor2.start();
-        RandomWetterSensor sensor3 = new RandomWetterSensor();
-        sensor3.registerObserver(this);
-        sensor3.setId(3);
-        sensor3.start();
-        RandomWetterSensor sensor4 = new RandomWetterSensor();
-        sensor4.setId(4);
-        sensor4.start();
-        sensor4.registerObserver(this);
-    }
 
     @Override
     public void notifyObservers() {

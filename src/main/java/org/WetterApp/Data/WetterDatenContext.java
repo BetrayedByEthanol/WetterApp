@@ -19,8 +19,8 @@ public class WetterDatenContext {
     }
 
 
-    public boolean speichereWetterdaten(WetterDatenModel model){
-        return false;
+    public WetterDatenModel speichereWetterdaten(WetterDatenModel model){
+        return model;
     }
 
     public boolean aendereWetterdaten(WetterDatenModel model){

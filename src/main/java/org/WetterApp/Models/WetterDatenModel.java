@@ -1,10 +1,10 @@
 package org.WetterApp.Models;
 
-import org.WetterApp.Models.Validation.WetterDatenValidation;
+
 
 import java.time.OffsetDateTime;
 
-public class WetterDatenModel implements WetterDatenValidation
+public class WetterDatenModel
 {
     private int id;
     private double windGeschw;
@@ -14,13 +14,13 @@ public class WetterDatenModel implements WetterDatenValidation
     private double luftFeuchtigkeit;
     private OffsetDateTime zeitDesMessens;
     private OffsetDateTime zeitDerLetztenAederung;
-    private int gemessenVon;
+    private WetterSensorModel gemessenVon;
 
-    public int getGemessenVon() {
+    public WetterSensorModel getGemessenVon() {
         return gemessenVon;
     }
 
-    public void setGemessenVon(int gemessenVon) {
+    public void setGemessenVon(WetterSensorModel gemessenVon) {
         this.gemessenVon = gemessenVon;
     }
 
@@ -88,4 +88,5 @@ public class WetterDatenModel implements WetterDatenValidation
     public void setZeitDerLetztenAederung(OffsetDateTime zeitDerLetztenAederung) {
         this.zeitDerLetztenAederung = zeitDerLetztenAederung;
     }
+
 }

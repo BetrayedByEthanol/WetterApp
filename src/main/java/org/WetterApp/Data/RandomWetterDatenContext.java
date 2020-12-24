@@ -1,6 +1,8 @@
 package org.WetterApp.Data;
 
 import org.WetterApp.Models.RandomWetterDatenModel;
+import org.WetterApp.Models.WetterSensorModel;
+import org.WetterApp.Simulation.RandomWetterDaten;
 import org.WetterApp.Models.WetterDatenModel;
 
 import java.time.OffsetDateTime;
@@ -11,7 +13,7 @@ public class RandomWetterDatenContext extends WetterDatenContext{
     @Override
     public WetterDatenModel getWetterdaten(int sensorId, long messZeitpunktInUnixTime) {
         RandomWetterDatenModel model = new RandomWetterDatenModel();
-        model.setGemessenVon(sensorId);
+        model.setGemessenVon(new WetterSensorModel());
         OffsetDateTime time = OffsetDateTime.now();
         time = time.minusSeconds(time.toEpochSecond() % 900);
         model.setZeitDesMessens(time);
@@ -28,7 +30,7 @@ public class RandomWetterDatenContext extends WetterDatenContext{
         while(time.toEpochSecond() < OffsetDateTime.now().toEpochSecond())
         {
             RandomWetterDatenModel model = new RandomWetterDatenModel();
-            model.setGemessenVon(sensorId);
+            model.setGemessenVon(new WetterSensorModel());
             model.setZeitDesMessens(time);
             model.setZeitDerLetztenAederung(time);
             time = time.plusMinutes(15);
@@ -41,7 +43,7 @@ public class RandomWetterDatenContext extends WetterDatenContext{
     @Override
     public WetterDatenModel getWetterdaten(int sensorId) {
         RandomWetterDatenModel model = new RandomWetterDatenModel();
-        model.setGemessenVon(sensorId);
+        model.setGemessenVon(new WetterSensorModel());
         OffsetDateTime time = OffsetDateTime.now();
         time = time.minusSeconds(time.toEpochSecond() % 900);
         model.setZeitDesMessens(time);

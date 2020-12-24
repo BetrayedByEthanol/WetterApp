@@ -1,9 +1,11 @@
 package org.WetterApp.Data;
 
+import org.WetterApp.Models.WetterSensorModel;
+
 public class MainControllerSettingContext {
 
-    public int getSelectedSensorId(){
-        return 1;
+    public WetterSensorModel getSelectedSensorId(){
+        return new WetterSensorModel();
     }
 
     public boolean aendere(int id){

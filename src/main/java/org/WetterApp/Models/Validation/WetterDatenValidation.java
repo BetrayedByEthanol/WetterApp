@@ -1,10 +1,11 @@
 package org.WetterApp.Models.Validation;
 
-import org.WetterApp.Models.IWetterDatenModel;
+import org.WetterApp.Models.WetterDatenModel;
 
-public interface WetterDatenValidation {
+public class WetterDatenValidation {
 
-    default IWetterDatenModel validate(IWetterDatenModel model){
+    public static WetterDatenModel validate(WetterDatenModel model)
+    {
         return model;
-    };
+    }
 }

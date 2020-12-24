@@ -9,51 +9,12 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class WetterSensorModel implements IObservable
+public class WetterSensorModel
 {
     private int id;
     private double gpsXCoord;
     private double gpsYCoord;
-    private String name;
-    private WetterDatenModel daten;
-    private ArrayList<IObserver> observers = new ArrayList<>();
-    private Timer timer;
-
-    public static ArrayList<WetterSensorModel> activeSensors = new ArrayList<>();
-
-    public WetterSensorModel()
-    {
-    }
-
-    public void start(){
-        timer = new Timer();
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                daten = messeDaten();
-                daten.setGemessenVon(id);
-                OffsetDateTime now = OffsetDateTime.now();
-                daten.setZeitDerLetztenAederung(now);
-                daten.setZeitDesMessens(now);
-                notifyObservers();
-            }
-        };
-
-        OffsetDateTime rightNow = OffsetDateTime.now();
-        long delay = (900 - (rightNow.toEpochSecond() % 900)) * 1000;
-        timer.scheduleAtFixedRate(task,delay, 900000);
-        activeSensors.add(this);
-
-    }
-
-    public void stop(){
-        timer.cancel();
-    }
-
-    public WetterDatenModel messeDaten()
-    {
-        return new WetterDatenModel();
-    }
+    private String name = "";
 
     public int getId() {
         return id;
@@ -87,17 +48,4 @@ public class WetterSensorModel implements IObservable
         this.name = name;
     }
 
-    @Override
-    public void notifyObservers() {
-        for(IObserver obs : observers)
-        {
-            obs.update(daten);
-        }
-    }
-
-    @Override
-    public void registerObserver(IObserver obs)
-    {
-        observers.add(obs);
-    }
 }

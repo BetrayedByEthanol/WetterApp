@@ -88,7 +88,7 @@
                                                     label="Monatz"/>
                                     </xAxis>
                                     <yAxis>
-                                        <NumberAxis lowerBound="900" upperBound="1200" label="Luftdrucker"/>
+                                        <NumberAxis lowerBound="900" forceZeroInRange="false" upperBound="1200" label="Luftdrucker"/>
                                     </yAxis>
                                 </LineChart>
                                 <LineChart fx:id="co2Chart">

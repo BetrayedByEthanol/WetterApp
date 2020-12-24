@@ -1,10 +1,10 @@
-package org.WetterApp.Models;
+package org.WetterApp.Simulation;
 
 import java.util.Random;
 
-public class RandomWetterDatenModel extends WetterDatenModel {
-    public RandomWetterDatenModel()
-    {
+public class RandomWetterDaten extends WetterDaten
+{
+    public RandomWetterDaten() {
         super();
         Random rng = new Random();
         this.setCo2(rng.nextDouble()/10);
@@ -13,4 +13,6 @@ public class RandomWetterDatenModel extends WetterDatenModel {
         this.setTempInC(rng.nextInt(45) - 10);
         this.setWindGeschw(rng.nextInt(15)+5);
     }
+
+
 }

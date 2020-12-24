@@ -6,15 +6,15 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.WetterApp.Models.WetterSensorModel;
+import org.WetterApp.Simulation.SimulationInitilizer;
 import org.WetterApp.Simulation.WetterSensor;
 
 import java.io.IOException;
 
 public class Main extends Application {
     public static void main(String[] args) {
-        //Erstelle die Wetterstation
-        WetterStation.getInstance();
-        System.out.println(new WetterSensor().send());
+
+        SimulationInitilizer.init();
 
         launch(args);
     }
@@ -30,7 +30,7 @@ public class Main extends Application {
     @Override
     public void stop()
     {
-        for (WetterSensorModel model : WetterSensorModel.activeSensors)
+        for (WetterSensor model : WetterSensor.activeSensors)
         {
            model.stop();
         }
