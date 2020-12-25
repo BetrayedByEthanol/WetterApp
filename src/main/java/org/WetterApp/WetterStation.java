@@ -37,13 +37,25 @@ public class WetterStation implements IObserver<String>, IObservable {
         Gson gson = new Gson();
         WetterDatenDTO dto =  gson.fromJson(daten, WetterDatenDTO.class);
 
-        WetterDatenModel model = WetterDatenMapper.MAPPER.map(dto);
+        try{
+            WetterDatenModel model = WetterDatenMapper.MAPPER.map(dto);
 
-        wetterDaten = WetterDatenValidation.validate(model);
+            wetterDaten = WetterDatenValidation.validate(model);
 
-		wetterDaten = context.getWetterdatenContext().speichereWetterdaten(wetterDaten);
+            wetterDaten = context.getWetterdatenContext().speichereWetterdaten(wetterDaten);
 
-		notifyObservers();
+            notifyObservers();
+
+        }catch (Exception ex)
+        {
+            System.out.println("Programm still loading...");
+            return;
+        }
+        catch(Error error){
+            System.out.println("Programm still loading...");
+            return;
+        }
+
     }
 
 

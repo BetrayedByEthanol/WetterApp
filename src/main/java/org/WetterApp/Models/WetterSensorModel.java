@@ -1,24 +1,14 @@
 package org.WetterApp.Models;
 
-import javafx.util.Pair;
-import org.WetterApp.Interfaces.IObservable;
-import org.WetterApp.Interfaces.IObserver;
-
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class WetterSensorModel
 {
     private int id;
     private double gpsXCoord;
     private double gpsYCoord;
-    private String name = "";
+    private String name = "default Berlin";
 
-    public int getId() {
-        return id;
-    }
+    public int getId() { return id; }
 
     public void setId(int id) {
         this.id = id;

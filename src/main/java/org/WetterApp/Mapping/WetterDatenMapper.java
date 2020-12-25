@@ -22,9 +22,7 @@ public interface WetterDatenMapper {
     WetterDatenModel map(WetterDatenDTO wetterDatenDTO);
 
     @Named("OffSetDT")
-    default OffsetDateTime map(String value){
-        return OffsetDateTime.parse(value);
-    }
+    default OffsetDateTime map(String value){ return OffsetDateTime.parse(value); }
 
     @Named("Sensor")
     default WetterSensorModel map(int sensorId){
