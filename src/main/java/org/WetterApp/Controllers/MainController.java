@@ -7,12 +7,11 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 import javafx.util.converter.DoubleStringConverter;
-import org.WetterApp.Data.IDbContext;
+import org.WetterApp.Data.Interfaces.IDbModelContext;
 import org.WetterApp.Interfaces.IObserver;
 import org.WetterApp.Models.InvalidWetterDatenModel;
 import org.WetterApp.Models.Validation.WetterDatenValidation;
@@ -75,18 +74,17 @@ public class MainController extends BaseController implements IObserver<WetterDa
 
 
 
-    private final IDbContext context;
+    private final IDbModelContext context;
     private int selectedSensor;
     private final ArrayList<LineChart> charts = new ArrayList<>();
-    private final ArrayList<XYChart.Data>[] wetterDaten = new ArrayList[]{new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>()};
     private WetterDatenModel modifiableWetterDaten;
     private WetterDatenModel aktuelleWetterDaten;
     private ArrayList<WetterSensorModel> sensoren = new ArrayList<>();
 
     public MainController() {
-        this.context = IDbContext.DB_CONTEXT;
+        this.context = IDbModelContext.MODEL_CONTEXT;
 
-        selectedSensor = context.getMainControllerSettinContext().getSelectedSensorId().getId();
+        selectedSensor = context.getMainControllerSettingsContext().getSelectedSensorId().getId();
 
         WetterStation.getInstance().registerObserver(this);
     }
@@ -218,20 +216,25 @@ public class MainController extends BaseController implements IObserver<WetterDa
 
         if(daten.getClass().equals(InvalidWetterDatenModel.class)) return;
 
+        ArrayList<XYChart.Data>[] wetterDaten = new ArrayList[]{new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>()};
+        for (int i = 0;i < 5;i++) {
+            wetterDaten[i].addAll(((XYChart.Series)(charts.get(i).getData().get(0))).getData());
+        }
+
         if (wetterDaten[0].size() > 35040) for (ArrayList<XYChart.Data> data : wetterDaten) data.remove(0);
 
         XYChart.Data[] dataSet = createDataSet(daten);
 
         for (int i = 0; i < 5; i++) wetterDaten[i].add(dataSet[i]);
 
-        redrawGraph();
+        redrawGraph(wetterDaten);
     }
 
     @FXML
-    private void redrawGraph() {
+    private void redrawGraph(ArrayList<XYChart.Data>[] wetterDaten) {
         for (int i = 0; i < 5; i++) {
             try {
-                charts.get(i).getData().removeAll(charts.get(i).getData());
+                charts.get(i).getData().clear();
                 XYChart.Series series = new XYChart.Series();
                 //Color Graph maybe ?
                 String rgb = "";
@@ -246,7 +249,7 @@ public class MainController extends BaseController implements IObserver<WetterDa
                         rgb = "#dce4ec";
                         break;
                     case 3:
-                        rgb = "#89cff0";
+                        rgb = "#79bfe0";
                         break;
                     case 4:
                         rgb = "#fde64b";
@@ -254,9 +257,8 @@ public class MainController extends BaseController implements IObserver<WetterDa
                 }
                 series.getData().setAll(wetterDaten[i]);
 
-                charts.get(i).getData().setAll(series);
-
-                ((XYChart.Series)(charts.get(i).getData().get(0))).getNode().lookup(".chart-series-line").setStyle("-fx-stroke: " + rgb + ";");
+                //charts.get(i).getData().setAll(series);
+                //((XYChart.Series)(charts.get(i).getData().get(0))).getNode().lookup(".chart-series-line").setStyle("-fx-stroke: " + rgb + ";");
             }catch(NullPointerException ex)
             {
                 System.out.println("Fehler: Kein Graph vorhanden in Tabelle Nummer: " + i);
@@ -292,7 +294,8 @@ public class MainController extends BaseController implements IObserver<WetterDa
 
         ladeWetterdatenDesLetztenJahres();
 
-        context.getMainControllerSettinContext().aendere(selectedSensor);
+        context.getMainControllerSettingsContext().aendere(selectedSensor);
+        context.getMainControllerSettingsContext().saveChanges();
     }
 
     @FXML
@@ -319,6 +322,7 @@ public class MainController extends BaseController implements IObserver<WetterDa
     public void aendereWetterdaten() {
         if(!modifiableWetterDaten.getClass().equals(InvalidWetterDatenModel.class))
         context.getWetterdatenContext().aendereWetterdaten(modifiableWetterDaten);
+        context.getWetterdatenContext().saveChanges();
     }
 
     @FXML
@@ -354,11 +358,14 @@ public class MainController extends BaseController implements IObserver<WetterDa
         //Start zeit now - 1 jahr in unix time, end now
         ArrayList<WetterDatenModel> wetterdaten = context.getWetterdatenContext().getWetterdaten(selectedSensor, 0, 100);
 
+        ArrayList<XYChart.Data>[] wetterDaten = new ArrayList[]{new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>()};
+
+
         for (WetterDatenModel daten : wetterdaten) {
             XYChart.Data[] dataSet = createDataSet(daten);
             for (int i = 0; i < 5; i++) wetterDaten[i].add(dataSet[i]);
         }
-        redrawGraph();
+        redrawGraph(wetterDaten);
     }
 
     public void getSensoren() {
@@ -380,6 +387,7 @@ public class MainController extends BaseController implements IObserver<WetterDa
         //lies Coord aus dem view
 
         sensorModel = context.getWetterSensorContext().neuerWettersensor(sensorModel);
+        context.getWetterSensorContext().saveChanges();
         sensor.setId(sensorModel.getId());
         sensor.registerObserver(WetterStation.getInstance());
         sensor.start();
@@ -390,6 +398,7 @@ public class MainController extends BaseController implements IObserver<WetterDa
     public void deleteSensor() {
         //lies ID vom view
         context.getWetterSensorContext().deleteWettersensor(0);
+        context.getWetterSensorContext().saveChanges();
     }
 
 }

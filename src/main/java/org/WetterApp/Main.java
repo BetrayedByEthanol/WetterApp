@@ -5,7 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.WetterApp.Models.WetterSensorModel;
+import org.WetterApp.Data.DbValidation;
+import org.WetterApp.Data.Migration.CSVMigration;
 import org.WetterApp.Simulation.SimulationInitilizer;
 import org.WetterApp.Simulation.WetterSensor;
 
@@ -13,6 +14,10 @@ import java.io.IOException;
 
 public class Main extends Application {
     public static void main(String[] args) {
+
+        new DbValidation().validate();
+
+        //new CSVMigration().up();
 
         SimulationInitilizer.init();
 

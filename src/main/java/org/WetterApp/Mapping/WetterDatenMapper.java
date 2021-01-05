@@ -1,6 +1,6 @@
 package org.WetterApp.Mapping;
 
-import org.WetterApp.Data.IDbContext;
+import org.WetterApp.Data.Interfaces.IDbModelContext;
 import org.WetterApp.Models.WetterDatenModel;
 import org.WetterApp.Models.DataTransitionalObjects.WetterDatenDTO;
 import org.WetterApp.Models.WetterSensorModel;
@@ -26,6 +26,6 @@ public interface WetterDatenMapper {
 
     @Named("Sensor")
     default WetterSensorModel map(int sensorId){
-      return IDbContext.DB_CONTEXT.getWetterSensorContext().ladeWetterSensor(sensorId);
-    };
+      return IDbModelContext.MODEL_CONTEXT.getWetterSensorContext().ladeWetterSensor(sensorId);
+    }
 }

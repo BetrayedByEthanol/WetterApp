@@ -114,6 +114,8 @@
                                     <Button onAction="#aendereWetterdaten" text="Speichern" />
                                     <Button onAction="#resetChange" text="Abbrechen" />
                                 </HBox>
+                                <Button text="Aenderung rueckgaengig machen"/>
+                                <Button text="Finde fehlehafe Daten"/>
                             </VBox>
                             <VBox GridPane.rowIndex="2">
                                 <Text> Neuer Sensor</Text>

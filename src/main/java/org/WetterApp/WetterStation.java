@@ -2,19 +2,18 @@ package org.WetterApp;
 
 
 import com.google.gson.Gson;
-import org.WetterApp.Data.IDbContext;
+import org.WetterApp.Data.Interfaces.IDbModelContext;
 import org.WetterApp.Interfaces.IObservable;
 import org.WetterApp.Interfaces.IObserver;
 import org.WetterApp.Mapping.WetterDatenMapper;
 import org.WetterApp.Models.DataTransitionalObjects.WetterDatenDTO;
 import org.WetterApp.Models.Validation.WetterDatenValidation;
-import org.WetterApp.Simulation.RandomWetterSensor;
 import org.WetterApp.Models.WetterDatenModel;
 
 
 public class WetterStation implements IObserver<String>, IObservable {
 
-    private IDbContext context;
+    private final IDbModelContext context;
     private static WetterStation Instance;
     private IObserver observer;
 
@@ -22,7 +21,7 @@ public class WetterStation implements IObserver<String>, IObservable {
 
     private WetterStation()
     {
-        this.context = IDbContext.DB_CONTEXT;
+        this.context = IDbModelContext.MODEL_CONTEXT;
     }
 
     public static WetterStation getInstance()
@@ -43,6 +42,7 @@ public class WetterStation implements IObserver<String>, IObservable {
             wetterDaten = WetterDatenValidation.validate(model);
 
             wetterDaten = context.getWetterdatenContext().speichereWetterdaten(wetterDaten);
+            context.getWetterdatenContext().saveChanges();
 
             notifyObservers();
 

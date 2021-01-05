@@ -1,4 +1,4 @@
 package org.WetterApp.Models;
 
-public class InvalidWetterDatenModel implements IWetterDatenModel{
+public class InvalidWetterDatenModel extends WetterDatenModel{
 }
