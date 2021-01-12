@@ -12,20 +12,23 @@ import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 import javafx.util.converter.DoubleStringConverter;
 import org.WetterApp.Data.Interfaces.IDbModelContext;
+import org.WetterApp.Data.Interfaces.IMainControllerSettingsContext;
+import org.WetterApp.Data.Interfaces.IWetterDatenContext;
+import org.WetterApp.Data.Interfaces.IWetterSensorContext;
 import org.WetterApp.Interfaces.IObserver;
 import org.WetterApp.Models.InvalidWetterDatenModel;
 import org.WetterApp.Models.Validation.WetterDatenValidation;
 import org.WetterApp.Models.WetterDatenModel;
 import org.WetterApp.Models.WetterSensorModel;
 import org.WetterApp.Simulation.WetterSensor;
-import org.WetterApp.WetterStation;
+
 import java.net.URL;
 import java.time.*;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.function.UnaryOperator;
 
-public class MainController extends BaseController implements IObserver<WetterDatenModel> {
+public class MainController extends BaseViewController implements IObserver<WetterDatenModel> {
 
     @FXML
     private LineChart tempChart;
@@ -71,22 +74,30 @@ public class MainController extends BaseController implements IObserver<WetterDa
     private TextField latitude;
     @FXML
     private TextField longitude;
-
+    @FXML
+    private Text header;
 
 
     private final IDbModelContext context;
     private int selectedSensor;
     private final ArrayList<LineChart> charts = new ArrayList<>();
     private WetterDatenModel modifiableWetterDaten;
-    private WetterDatenModel aktuelleWetterDaten;
-    private ArrayList<WetterSensorModel> sensoren = new ArrayList<>();
 
     public MainController() {
         this.context = IDbModelContext.MODEL_CONTEXT;
+        WetterSensorModel sensor = null;
+        try(IMainControllerSettingsContext mContext = context.getMainControllerSettingsContext()){
+            sensor = mContext.getSelectedSensorId();
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
+        }
+        if(sensor != null) selectedSensor = sensor.getId();
+        else {
+            selectedSensor = 1;
+        }
 
-        selectedSensor = context.getMainControllerSettingsContext().getSelectedSensorId().getId();
 
-        WetterStation.getInstance().registerObserver(this);
+        WetterStationController.getInstance().registerObserver(this);
     }
 
     @Override
@@ -97,6 +108,9 @@ public class MainController extends BaseController implements IObserver<WetterDa
         charts.add(druckChart);
         charts.add(feuchtChart);
         charts.add(co2Chart);
+
+        header.setStyle("-fx-font: 24 arial;");
+
         wetterSensor.setConverter(new StringConverter<WetterSensorModel>() {
             @Override
             public String toString(WetterSensorModel object) {
@@ -145,9 +159,8 @@ public class MainController extends BaseController implements IObserver<WetterDa
             NumberAxis xAxis = (NumberAxis) chart.getXAxis();
             xAxis.setTickLabelRotation(270);
             xAxis.setTickLabelsVisible(false);
-            xAxis.setMinorTickVisible(false);
-            xAxis.setTickMarkVisible(false);
-            xAxis.setMinorTickVisible(false);
+            xAxis.setTickMarkVisible(true);
+            xAxis.setMinorTickVisible(true);
         }
         super.initialize(location, resources);
     }
@@ -188,8 +201,12 @@ public class MainController extends BaseController implements IObserver<WetterDa
         if(alteStunden.getSelectionModel().getSelectedItem() != null && alteMinuten.getSelectionModel().getSelectedItem() != null){
             LocalDateTime dateTime = LocalDateTime.of(datePicker.getValue().getYear(),datePicker.getValue().getMonthValue(),datePicker.getValue().getDayOfMonth(),alteStunden.getSelectionModel().getSelectedItem().intValue(),alteMinuten.getSelectionModel().getSelectedItem().intValue());
             OffsetDateTime offsetDateTime = dateTime.atOffset(OffsetDateTime.now().getOffset());
-            modifiableWetterDaten = context.getWetterdatenContext().getWetterdaten(selectedSensor,offsetDateTime.toEpochSecond());
 
+            try(IWetterDatenContext wdContext =context.getWetterdatenContext()){
+                modifiableWetterDaten = wdContext.getWetterdaten(selectedSensor,offsetDateTime.toEpochSecond());
+            }catch(Exception ex){
+                System.out.println(ex.getMessage());
+            }
             alteTemperatur.setText(Double.toString(modifiableWetterDaten.getTempInC()));
             alterWind.setText(Double.toString(modifiableWetterDaten.getWindGeschw()));
             alteFeucht.setText(Double.toString(modifiableWetterDaten.getLuftFeuchtigkeit()));
@@ -206,6 +223,7 @@ public class MainController extends BaseController implements IObserver<WetterDa
         }
     }
 
+    //Aktualisiert den View mit den neuen Wetterdaten
     public void singleUpdate(WetterDatenModel daten) {
 
         aktuelleTemperatur.setText(Double.toString(daten.getTempInC()));
@@ -226,10 +244,31 @@ public class MainController extends BaseController implements IObserver<WetterDa
         XYChart.Data[] dataSet = createDataSet(daten);
 
         for (int i = 0; i < 5; i++) wetterDaten[i].add(dataSet[i]);
-
         redrawGraph(wetterDaten);
     }
 
+    //Laedt die Wetterdaten des letzten Jahres oder alle bisherigen, wenn noch in nicht
+    //genug vorhanden sind, und fuegt die Graphen in den View ein
+    @FXML
+    public void ladeWetterdatenDesLetztenJahres() {
+        header.setText("Loading...");
+        ArrayList<WetterDatenModel> wetterdaten = new ArrayList<>();
+        try(IWetterDatenContext wdContext = context.getWetterdatenContext()){
+            wetterdaten = wdContext.getWetterdaten(selectedSensor, OffsetDateTime.now().minusYears(1).toEpochSecond(), OffsetDateTime.now().toEpochSecond());
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
+        }
+        ArrayList<XYChart.Data>[] wetterDaten = new ArrayList[]{new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>()};
+
+        for (WetterDatenModel daten : wetterdaten) {
+            XYChart.Data[] dataSet = createDataSet(daten);
+            for (int i = 0; i < 5; i++) wetterDaten[i].add(dataSet[i]);
+        }
+        redrawGraph(wetterDaten);
+    }
+
+    //Aktualisiert die Graphen
+    //Param ein Array mit den 5 ArrayListen der Punkte
     @FXML
     private void redrawGraph(ArrayList<XYChart.Data>[] wetterDaten) {
         for (int i = 0; i < 5; i++) {
@@ -237,28 +276,18 @@ public class MainController extends BaseController implements IObserver<WetterDa
                 charts.get(i).getData().clear();
                 XYChart.Series series = new XYChart.Series();
                 //Color Graph maybe ?
-                String rgb = "";
-                switch (i){
-                    case 0:
-                        rgb = "#ff0000";
-                        break;
-                    case 1:
-                        rgb = "#034100";
-                        break;
-                    case 2:
-                        rgb = "#dce4ec";
-                        break;
-                    case 3:
-                        rgb = "#79bfe0";
-                        break;
-                    case 4:
-                        rgb = "#fde64b";
-                        break;
-                }
+                String rgb = switch (i) {
+                    case 0 -> "#ff0000";
+                    case 1 -> "#034100";
+                    case 2 -> "#dce4ec";
+                    case 3 -> "#396da0";
+                    case 4 -> "#fde64b";
+                    default -> "";
+                };
                 series.getData().setAll(wetterDaten[i]);
 
-                //charts.get(i).getData().setAll(series);
-                //((XYChart.Series)(charts.get(i).getData().get(0))).getNode().lookup(".chart-series-line").setStyle("-fx-stroke: " + rgb + ";");
+                charts.get(i).getData().setAll(series);
+                ((XYChart.Series)(charts.get(i).getData().get(0))).getNode().lookup(".chart-series-line").setStyle("-fx-stroke: " + rgb + ";");
             }catch(NullPointerException ex)
             {
                 System.out.println("Fehler: Kein Graph vorhanden in Tabelle Nummer: " + i);
@@ -266,6 +295,7 @@ public class MainController extends BaseController implements IObserver<WetterDa
         }
     }
 
+    //Helfer Methode, die einen Punkt fuer jedes Diagramm an Hand der Wetterdaten erstellt
     private XYChart.Data[] createDataSet(WetterDatenModel daten) {
         long timeValue = daten.getZeitDesMessens().toEpochSecond() - (OffsetDateTime.now().minusYears(1).toEpochSecond() - (OffsetDateTime.now().toEpochSecond() % 900));
         //double timeValue = ((double) time) / 2628000;
@@ -286,18 +316,24 @@ public class MainController extends BaseController implements IObserver<WetterDa
         return dataSet;
     }
 
+    //Action, wenn ein neuer Sensor ausgewaehlt wird
     @FXML
     public void sensorSelected() {
         selectedSensor = wetterSensor.getSelectionModel().getSelectedItem().getId();
 
         getAlteWetterdatenModel();
-
+        resetChange();
         ladeWetterdatenDesLetztenJahres();
 
-        context.getMainControllerSettingsContext().aendere(selectedSensor);
-        context.getMainControllerSettingsContext().saveChanges();
+        try(IMainControllerSettingsContext mContext = context.getMainControllerSettingsContext()){
+            mContext.aendere(selectedSensor);
+            mContext.saveChanges();
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
+        }
     }
 
+    //Action, wenn alte Wetterdaten geaendert werden
     @FXML
     public void onAlteWetterdatenChange(){
         if(alteTemperatur.getText().isEmpty() || alterWind.getText().isEmpty() || alteFeucht.getText().isEmpty() || alterDruck.getText().isEmpty() || alteCo2.getText().isEmpty()) return;
@@ -310,26 +346,38 @@ public class MainController extends BaseController implements IObserver<WetterDa
         modifiableWetterDaten = WetterDatenValidation.validate(modifiableWetterDaten);
 
         if(modifiableWetterDaten.getClass().equals(InvalidWetterDatenModel.class)){
-            testMessage.setText("oh no");
+            testMessage.setText("invalid input");
         }
         else{
-            testMessage.setText("mah Man");
+            testMessage.setText("");
         }
 
     }
 
+    //Speichert die Aenderung in die DB
     @FXML
     public void aendereWetterdaten() {
-        if(!modifiableWetterDaten.getClass().equals(InvalidWetterDatenModel.class))
-        context.getWetterdatenContext().aendereWetterdaten(modifiableWetterDaten);
-        context.getWetterdatenContext().saveChanges();
+        if(modifiableWetterDaten != null && !modifiableWetterDaten.getClass().equals(InvalidWetterDatenModel.class)){
+            try(IWetterDatenContext wdContext = context.getWetterdatenContext()){
+                wdContext.aendereWetterdaten(modifiableWetterDaten);
+                wdContext.saveChanges();
+                resetChange();
+            }catch (Exception ex){
+                System.out.println(ex.getMessage());
+            }
+        }
     }
 
+    //laedt die letzte Messung des ausgewaehlten Wettersensors
     @FXML
     public void getAlteWetterdatenModel() {
         //Lade den letzen eintrag der Wetterdaten und fuege ihn den view ein
-         modifiableWetterDaten = aktuelleWetterDaten = context.getWetterdatenContext().getWetterdaten(selectedSensor);
-
+        WetterDatenModel aktuelleWetterDaten = null;
+        try(IWetterDatenContext wdContext = context.getWetterdatenContext()){
+            aktuelleWetterDaten = wdContext.getWetterdaten(selectedSensor);
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
+        }
         //if not null aktualisiere den view else sage warte
         if (aktuelleWetterDaten != null) {
             aktuelleTemperatur.setText(Double.toString(aktuelleWetterDaten.getTempInC()));
@@ -340,8 +388,10 @@ public class MainController extends BaseController implements IObserver<WetterDa
         } else {
             aktuelleTemperatur.setText("noch keine Messung vorhanden");
         }
+        header.setText("Wetterstation");
     }
 
+    //Resets die zu aenderenden Wetterdaten
     @FXML
     public void resetChange(){
         alteTemperatur.setText("");
@@ -354,51 +404,54 @@ public class MainController extends BaseController implements IObserver<WetterDa
         datePicker.getEditor().clear();
     }
 
-    public void ladeWetterdatenDesLetztenJahres() {
-        //Start zeit now - 1 jahr in unix time, end now
-        ArrayList<WetterDatenModel> wetterdaten = context.getWetterdatenContext().getWetterdaten(selectedSensor, 0, 100);
-
-        ArrayList<XYChart.Data>[] wetterDaten = new ArrayList[]{new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>()};
-
-
-        for (WetterDatenModel daten : wetterdaten) {
-            XYChart.Data[] dataSet = createDataSet(daten);
-            for (int i = 0; i < 5; i++) wetterDaten[i].add(dataSet[i]);
-        }
-        redrawGraph(wetterDaten);
-    }
-
+    //Laedt die Wettersensoren aus der DB und fuegt sie in die ComboBox ein
+    @FXML
     public void getSensoren() {
-        //fuege sensoren in den view ein
-        sensoren = context.getWetterSensorContext().ladeWetterSensoren();
-        for (WetterSensorModel sensor : sensoren) {
-            wetterSensor.getItems().add(sensor);
+        ArrayList<WetterSensorModel> sensoren = new ArrayList<>();
+        try (IWetterSensorContext wsContext = context.getWetterSensorContext()){
+            sensoren = wsContext.ladeWetterSensoren();
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
         }
-        wetterSensor.getSelectionModel().select(selectedSensor);
+        int id = 0;
+        for (int i = 0; i < sensoren.size(); i++) {
+            wetterSensor.getItems().add(sensoren.get(i));
+            if(selectedSensor == sensoren.get(i).getId()) id = 0;
+        }
 
-        longitude.setText(Double.toString(sensoren.get(selectedSensor).getGpsXCoord()));
-        latitude.setText(Double.toString( sensoren.get(selectedSensor).getGpsYCoord()));
+        wetterSensor.getSelectionModel().select(id);
+        longitude.setText(Double.toString(sensoren.get(id).getGpsXCoord()));
+        latitude.setText(Double.toString( sensoren.get(id).getGpsYCoord()));
 
     }
 
+    //Fuegt einen neuen Wettersensor in die DB
     public void neuerWettersensor() {
         WetterSensor sensor = new WetterSensor();
         WetterSensorModel sensorModel = new WetterSensorModel();
         //lies Coord aus dem view
-
-        sensorModel = context.getWetterSensorContext().neuerWettersensor(sensorModel);
-        context.getWetterSensorContext().saveChanges();
+        try (IWetterSensorContext wsContext = context.getWetterSensorContext() ){
+            sensorModel = wsContext.neuerWettersensor(sensorModel);
+            wsContext.saveChanges();
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
+        }
         sensor.setId(sensorModel.getId());
-        sensor.registerObserver(WetterStation.getInstance());
+        sensor.registerObserver(WetterStationController.getInstance());
         sensor.start();
 
         //update sensorenlist im view
     }
 
+    //Loescht einen Wettersensor aus der DB
     public void deleteSensor() {
         //lies ID vom view
-        context.getWetterSensorContext().deleteWettersensor(0);
-        context.getWetterSensorContext().saveChanges();
+        try(IWetterSensorContext wsContext = context.getWetterSensorContext() ){
+            wsContext.deleteWettersensor(0);
+            wsContext.saveChanges();
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
+        }
     }
 
 }

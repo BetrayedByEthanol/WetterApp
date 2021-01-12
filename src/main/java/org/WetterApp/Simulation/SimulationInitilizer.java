@@ -1,19 +1,13 @@
 package org.WetterApp.Simulation;
 
-import org.WetterApp.WetterStation;
+import org.WetterApp.Controllers.WetterStationController;
 
 public class SimulationInitilizer {
     public static void init()
     {
-        //Ueberpruefe, ob die Datenbank exsistiert.
-
         //Lade bzw. registiere Sensoren
-        WetterStation station = WetterStation.getInstance();
+        WetterStationController station = WetterStationController.getInstance();
 
-        RandomWetterSensor sensor1 = new RandomWetterSensor();
-        sensor1.registerObserver(station);
-        sensor1.setId(1);
-        sensor1.start();
         RandomWetterSensor sensor2 = new RandomWetterSensor();
         sensor2.registerObserver(station);
         sensor2.setId(2);
@@ -26,6 +20,10 @@ public class SimulationInitilizer {
         sensor4.setId(4);
         sensor4.start();
         sensor4.registerObserver(station);
+        RandomWetterSensor sensor5 = new RandomWetterSensor();
+        sensor5.registerObserver(station);
+        sensor5.setId(5);
+        sensor5.start();
     }
 
 }

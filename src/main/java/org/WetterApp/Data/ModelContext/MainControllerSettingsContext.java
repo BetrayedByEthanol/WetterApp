@@ -1,6 +1,6 @@
 package org.WetterApp.Data.ModelContext;
 
-import org.WetterApp.Data.ADbContext;
+import org.WetterApp.Data.DbContext;
 import org.WetterApp.Data.Interfaces.IMainControllerSettingsContext;
 import org.WetterApp.Models.WetterSensorModel;
 
@@ -8,9 +8,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class MainControllerSettingsContext extends ADbContext implements IMainControllerSettingsContext {
+public class MainControllerSettingsContext extends DbContext implements IMainControllerSettingsContext {
 
-    public MainControllerSettingsContext() {
+    public MainControllerSettingsContext()throws SQLException {
         super();
     }
 
@@ -44,19 +44,20 @@ public class MainControllerSettingsContext extends ADbContext implements IMainCo
         boolean result = false;
         try{
             PreparedStatement stmt = con.prepareStatement(
-                    "UPDATE \"settings\" " +
-                            "SET \"selecedSensor\" = " + id + " " +
+                    "UPDATE settings " +
+                            "SET selectedSensor = ? " +
                             "WHERE id = 1;"
             );
+            stmt.setInt(1,id);
             result = stmt.executeUpdate() == 1;
             stmt.close();
         }catch (SQLException ex){
             try{
                 PreparedStatement insertStmt = con.prepareStatement(
-                  "INSERT INTO \"settings\" (\"selectedSensor\") " +
-                        "VALUES (" + id + ");"
+                  "INSERT INTO settings (selectedSensor) " +
+                        "VALUES (?);"
                 );
-
+                insertStmt.setInt(1,id);
                 result = insertStmt.executeUpdate() == 1;
                 insertStmt.close();
             }catch (SQLException sqlException){

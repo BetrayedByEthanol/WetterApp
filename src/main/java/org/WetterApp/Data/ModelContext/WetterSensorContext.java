@@ -1,17 +1,16 @@
 package org.WetterApp.Data.ModelContext;
 
-import org.WetterApp.Data.ADbContext;
+import org.WetterApp.Data.DbContext;
 import org.WetterApp.Data.Interfaces.IWetterSensorContext;
 import org.WetterApp.Models.WetterSensorModel;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
-public class WetterSensorContext extends ADbContext implements IWetterSensorContext {
-    public WetterSensorContext() { super(); }
+public class WetterSensorContext extends DbContext implements IWetterSensorContext {
+    public WetterSensorContext() throws SQLException { super(); }
 
     public ArrayList<WetterSensorModel> ladeWetterSensoren(){
         ArrayList<WetterSensorModel> sensorModels =new ArrayList<WetterSensorModel>();
@@ -40,8 +39,9 @@ public class WetterSensorContext extends ADbContext implements IWetterSensorCont
         try{
             PreparedStatement stmt = con.prepareStatement(
               "SELECT * FROM \"sensoren\" " +
-                      "WHERE \"id\" = " + id + ";"
+                      "WHERE \"id\" = ?;"
             );
+            stmt.setInt(1,id);
 
             ResultSet rs = stmt.executeQuery();
             if(rs.next()){
@@ -68,9 +68,11 @@ public class WetterSensorContext extends ADbContext implements IWetterSensorCont
         try{
             PreparedStatement stmt = con.prepareStatement(
                     "INSERT INTO \"sensoren\" (\"name\",\"gpsLat\",\"gpsLong\") " +
-                            "VALUES (\"" + sensor.getName() +"\"," + sensor.getGpsYCoord() +", " + sensor.getGpsXCoord() + ");"
+                            "VALUES (?,?,?);"
             );
-
+            stmt.setString(1,sensor.getName());
+            stmt.setDouble(2,sensor.getGpsYCoord());
+            stmt.setDouble(3,sensor.getGpsXCoord());
             stmt.executeUpdate();
 
             ResultSet rs = stmt.getGeneratedKeys();
@@ -93,9 +95,9 @@ public class WetterSensorContext extends ADbContext implements IWetterSensorCont
         try{
             PreparedStatement stmt = con.prepareStatement(
                     "DELETE FROM \"sensoren\" " +
-                            "WHERER \"id\" = " + id + ";"
+                            "WHERER \"id\" = ?;"
             );
-
+            stmt.setInt(1,id);
             result = stmt.executeUpdate() > 0;
             stmt.close();
         }catch (SQLException ex){

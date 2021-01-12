@@ -1,17 +1,18 @@
 package org.WetterApp.Data;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class DbValidation extends ADbContext {
+public class DbValidation extends DbContext {
 
-    public DbValidation() {
+    public DbValidation() throws SQLException {
         super();
     }
 
     public void validate(){
-        valSettings();
         valSenoren();
+        valSettings();
         valMessungen();
         valWettterdaten();
         valInvalidWetterdaten();
@@ -77,6 +78,19 @@ public class DbValidation extends ADbContext {
                             "\"gpsLat\"     DOUBLE NOT NULL," +
                             "\"gpsLong\"    DOUBLE NOT NULL" +
                             ")");
+
+            if(stmt.getUpdateCount() > 0)
+            {
+                PreparedStatement insertStmt = con.prepareStatement(
+                        "INSERT INTO \"sensoren\" (\"name\",\"gpsLat\",\"gpsLong\") " +
+                                "VALUES (?,?,?);"
+                );
+                insertStmt.setString(1,"default sensor #1");
+                insertStmt.setDouble(2,0);
+                insertStmt.setDouble(3,0);
+                insertStmt.executeUpdate();
+                insertStmt.close();
+            }
             stmt.close();
         }catch (SQLException ex){
             System.out.println("Sensoren exception: " + ex.getMessage());
@@ -89,8 +103,17 @@ public class DbValidation extends ADbContext {
             stmt.execute(
                     "CREATE TABLE IF NOT EXISTS \"settings\" (" +
                             "\"id\" INTEGER PRIMARY KEY AUTOINCREMENT," +
-                            "\"selectedSenor\" INTEGER NOT NULL" +
+                            "\"selectedSensor\" INTEGER NOT NULL" +
                             ")");
+            if(stmt.getUpdateCount() > 0){
+                PreparedStatement insertStmt = con.prepareStatement(
+                        "INSERT INTO settings (selectedSensor) " +
+                                "VALUES (?);"
+                );
+                insertStmt.setInt(1,1);
+                insertStmt.executeUpdate();
+                insertStmt.close();
+            }
             stmt.close();
         }catch (SQLException ex){
             System.out.println("Setting exception: " + ex.getMessage());

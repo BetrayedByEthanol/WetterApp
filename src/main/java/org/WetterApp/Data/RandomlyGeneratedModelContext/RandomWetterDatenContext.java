@@ -60,4 +60,5 @@ public class RandomWetterDatenContext extends SimulatedDbContext implements IWet
     public boolean aendereWetterdaten(WetterDatenModel model) {
         return false;
     }
+
 }

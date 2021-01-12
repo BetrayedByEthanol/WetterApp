@@ -1,52 +1,65 @@
+org/WetterApp/Data/RandomlyGeneratedModelContext/RandomWetterSensorContext.java
+ org.WetterApp.Data.RandomlyGeneratedModelContext.RandomWetterSensorContext
+org/WetterApp/Data/Interfaces/IDbModelContext.java
+ org.WetterApp.Data.Interfaces.IDbModelContext
 org/WetterApp/Data/DbContext.java
  org.WetterApp.Data.DbContext
+org/WetterApp/Data/RandomlyGeneratedModelContext/RandomDbModelContext.java
+ org.WetterApp.Data.RandomlyGeneratedModelContext.RandomDbModelContext
+org/WetterApp/Data/ModelContext/MainControllerSettingsContext.java
+ org.WetterApp.Data.ModelContext.MainControllerSettingsContext
+org/WetterApp/Models/ChangedWetterDatenModel.java
+ org.WetterApp.Models.ChangedWetterDatenModel
 org/WetterApp/Simulation/WetterSensor.java
  org.WetterApp.Simulation.WetterSensor
  org.WetterApp.Simulation.WetterSensor$1
+org/WetterApp/Controllers/WetterStationController.java
+ org.WetterApp.Controllers.WetterStationController
 org/WetterApp/Models/WetterDatenModel.java
  org.WetterApp.Models.WetterDatenModel
 org/WetterApp/Main.java
  org.WetterApp.Main
-org/WetterApp/Controllers/BaseController.java
- org.WetterApp.Controllers.BaseController
+org/WetterApp/Data/ModelContext/WetterDatenContext.java
+ org.WetterApp.Data.ModelContext.WetterDatenContext
+ org.WetterApp.Data.ModelContext.WetterDatenContext$PreparedInsertingStatements
 org/WetterApp/Mapping/WetterDatenMapper.java
  org.WetterApp.Mapping.WetterDatenMapper
+org/WetterApp/Controllers/BaseViewController.java
+ org.WetterApp.Controllers.BaseViewController
 org/WetterApp/Models/WetterSensorModel.java
  org.WetterApp.Models.WetterSensorModel
+org/WetterApp/Data/Interfaces/IWetterDatenContext.java
+ org.WetterApp.Data.Interfaces.IWetterDatenContext
 org/WetterApp/Simulation/WetterDaten.java
  org.WetterApp.Simulation.WetterDaten
+org/WetterApp/Data/Interfaces/IWetterSensorContext.java
+ org.WetterApp.Data.Interfaces.IWetterSensorContext
 org/WetterApp/Data/DbValidation.java
  org.WetterApp.Data.DbValidation
-org/WetterApp/Data/IDbContext.java
- org.WetterApp.Data.IDbContext
-org/WetterApp/Data/WetterSensorContext.java
- org.WetterApp.Data.WetterSensorContext
-org/WetterApp/Data/RandomWetterSensorContext.java
- org.WetterApp.Data.RandomWetterSensorContext
+org/WetterApp/Data/RandomlyGeneratedModelContext/RandomWetterDatenContext.java
+ org.WetterApp.Data.RandomlyGeneratedModelContext.RandomWetterDatenContext
+org/WetterApp/Data/Interfaces/IDbContext.java
+ org.WetterApp.Data.Interfaces.IDbContext
+org/WetterApp/Data/RandomlyGeneratedModelContext/DefaultMainControllerSettingsContext.java
+ org.WetterApp.Data.RandomlyGeneratedModelContext.DefaultMainControllerSettingsContext
 org/WetterApp/Models/Validation/WetterDatenValidation.java
  org.WetterApp.Models.Validation.WetterDatenValidation
-org/WetterApp/WetterStation.java
- org.WetterApp.WetterStation
-org/WetterApp/Data/RandomWetterDatenContext.java
- org.WetterApp.Data.RandomWetterDatenContext
-org/WetterApp/Data/RandomDbContext.java
- org.WetterApp.Data.RandomDbContext
+org/WetterApp/Data/RandomlyGeneratedModelContext/SimulatedDbContext.java
+ org.WetterApp.Data.RandomlyGeneratedModelContext.SimulatedDbContext
 org/WetterApp/Simulation/RandomWetterSensor.java
  org.WetterApp.Simulation.RandomWetterSensor
 org/WetterApp/Interfaces/IObservable.java
  org.WetterApp.Interfaces.IObservable
+org/WetterApp/Data/ModelContext/WetterSensorContext.java
+ org.WetterApp.Data.ModelContext.WetterSensorContext
 org/WetterApp/Simulation/SimulationInitilizer.java
  org.WetterApp.Simulation.SimulationInitilizer
 org/WetterApp/Models/DataTransitionalObjects/WetterDatenDTO.java
  org.WetterApp.Models.DataTransitionalObjects.WetterDatenDTO
-org/WetterApp/Data/MainControllerSettingContext.java
- org.WetterApp.Data.MainControllerSettingContext
-org/WetterApp/Data/WetterDatenContext.java
- org.WetterApp.Data.WetterDatenContext
-org/WetterApp/Controllers/MainController.java
- org.WetterApp.Controllers.MainController
- org.WetterApp.Controllers.MainController$1
- org.WetterApp.Controllers.MainController$2
+org/WetterApp/Data/DbModelContext.java
+ org.WetterApp.Data.DbModelContext
+org/WetterApp/Data/Migration/CSVMigration.java
+ org.WetterApp.Data.Migration.CSVMigration
 org/WetterApp/Models/InvalidWetterDatenModel.java
  org.WetterApp.Models.InvalidWetterDatenModel
 org/WetterApp/Models/RandomWetterDatenModel.java
@@ -55,5 +68,9 @@ org/WetterApp/Simulation/RandomWetterDaten.java
  org.WetterApp.Simulation.RandomWetterDaten
 org/WetterApp/Interfaces/IObserver.java
  org.WetterApp.Interfaces.IObserver
-org/WetterApp/Data/Migration/CSVMigration.java
- org.WetterApp.Data.Migration.CSVMigration
+org/WetterApp/Controllers/MainController.java
+ org.WetterApp.Controllers.MainController
+ org.WetterApp.Controllers.MainController$1
+ org.WetterApp.Controllers.MainController$2
+org/WetterApp/Data/Interfaces/IMainControllerSettingsContext.java
+ org.WetterApp.Data.Interfaces.IMainControllerSettingsContext

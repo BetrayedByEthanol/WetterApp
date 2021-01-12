@@ -27,6 +27,7 @@
                 <Insets bottom="10" left="10" right="10" top="10" />
             </padding>
             <VBox spacing="10">
+                <Text fx:id="header" />
                 <Text>Wettersensor</Text>
                 <ComboBox fx:id="wetterSensor" onAction="#sensorSelected" />
                 <HBox spacing="10">
@@ -114,6 +115,8 @@
                                     <Button onAction="#aendereWetterdaten" text="Speichern" />
                                     <Button onAction="#resetChange" text="Abbrechen" />
                                 </HBox>
+                                <Button text="Aenderung rueckgaengig machen"/>
+                                <Button text="Finde fehlehafe Daten"/>
                             </VBox>
                             <VBox GridPane.rowIndex="2">
                                 <Text> Neuer Sensor</Text>
@@ -147,7 +150,7 @@
                                         <NumberAxis label="Monatz" lowerBound="0" tickLabelsVisible="false" upperBound="31536000" />
                                     </xAxis>
                                     <yAxis>
-                                        <NumberAxis label="Feuchtigkeit" lowerBound="0" upperBound="75" />
+                                        <NumberAxis label="Feuchtigkeit" forceZeroInRange="false" lowerBound="50" upperBound="100" />
                                     </yAxis>
                                 </LineChart>
                                 <LineChart fx:id="druckChart" legendVisible="false" minHeight="300">

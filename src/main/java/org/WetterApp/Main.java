@@ -15,9 +15,11 @@ import java.io.IOException;
 public class Main extends Application {
     public static void main(String[] args) {
 
-        new DbValidation().validate();
-
-        //new CSVMigration().up();
+        try(DbValidation dbValidation = new DbValidation()){
+            dbValidation.validate();
+        }catch (Exception ex){
+            System.out.println("Can't connect to DB");
+        }
 
         SimulationInitilizer.init();
 

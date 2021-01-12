@@ -8,16 +8,19 @@ import org.WetterApp.Data.ModelContext.MainControllerSettingsContext;
 import org.WetterApp.Data.ModelContext.WetterDatenContext;
 import org.WetterApp.Data.ModelContext.WetterSensorContext;
 
+import java.sql.SQLException;
+
 public class DbModelContext implements IDbModelContext {
-    public IWetterDatenContext getWetterdatenContext() {
+
+    public IWetterDatenContext getWetterdatenContext() throws SQLException {
         return new WetterDatenContext();
     }
 
-    public IWetterSensorContext getWetterSensorContext() {
+    public IWetterSensorContext getWetterSensorContext() throws SQLException {
         return new WetterSensorContext();
     }
 
-    public IMainControllerSettingsContext getMainControllerSettingsContext() {
+    public IMainControllerSettingsContext getMainControllerSettingsContext() throws SQLException {
         return new MainControllerSettingsContext();
     }
 

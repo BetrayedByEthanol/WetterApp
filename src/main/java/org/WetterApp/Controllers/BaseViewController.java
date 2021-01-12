@@ -6,7 +6,7 @@ import javafx.fxml.Initializable;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class BaseController implements Initializable {
+public abstract class BaseViewController implements Initializable {
 
     protected URL location;
     protected ResourceBundle resources;
